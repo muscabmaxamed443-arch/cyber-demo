@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cybersecurity Demo</title>
+<style>
+body {
+  background: #10131c;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+h1 { color: #ff4055; }
+img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 12px;
+}
+textarea {
+  width: 95%;
+  height: 90px;
+  margin: 12px 0;
+  padding: 8px;
+}
+button {
+  padding: 14px;
+  margin: 5px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 15px;
+}
+#start { background: #ff4055; color: black; }
+#stop { background: #42e6a4; color: black; }
+#status { color: #42e6a4; }
+</style>
+</head>
+<body>
+
+<h1>⚠ SECURITY ALERT</h1>
+<p>Cybersecurity Awareness Demonstration</p>
+
+<img src="photo.jpeg" alt="Custom warning image">
+
+<h3>Warning message</h3>
+<textarea id="message">Attention! This is a cybersecurity awareness demonstration. No device has been infected. Press Yes, Stop and Recover to end the simulation.</textarea>
+
+<br>
+<button id="start">START SIMULATION</button>
+<button id="stop">YES — STOP / RECOVER</button>
+
+<p id="status">DEMO READY</p>
+
+<script>
+let active = false;
+let timer;
+
+function speak() {
+  if (!active) return;
+
+  speechSynthesis.cancel();
+
+  const speech = new SpeechSynthesisUtterance(
+    document.getElementById("message").value
+  );
+
+  speech.lang = "en-US";
+
+  speech.onend = () => {
+    if (active) {
+      timer = setTimeout(speak, 1000);
+    }
+  };
+
+  speechSynthesis.speak(speech);
+}
+
+document.getElementById("start").onclick = () => {
+  if (!("speechSynthesis" in window)) {
+    document.getElementById("status").textContent =
+      "Voice is not supported in this browser.";
+    return;
+  }
+
+  active = true;
+  document.getElementById("status").textContent =
+    "SIMULATION ACTIVE";
+
+  speak();
+};
+
+document.getElementById("stop").onclick = () => {
+  active = false;
+  clearTimeout(timer);
+  speechSynthesis.cancel();
+
+  document.getElementById("status").textContent =
+    "RECOVERED — SIMULATION STOPPED";
+};
+
+window.onpagehide = () => {
+  active = false;
+  clearTimeout(timer);
+  speechSynthesis.cancel();
+};
+</script>
+
+</body>
+</html>
